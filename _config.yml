@@ -28,13 +28,16 @@ twitter_username: jekyllrb
 github_username:  rileyzzz
 
 # Build settings
-theme: dark-minima
+#theme: minima
 # minima:
 #  skin: dark
 
 # theme: jekyll-theme-midnight
 plugins:
   - jekyll-feed
+  - jekyll-remote-theme
+
+remote_theme: songzivong/dark-minima
 
 # Exclude from processing.
 # The following items will not be processed, by default.
