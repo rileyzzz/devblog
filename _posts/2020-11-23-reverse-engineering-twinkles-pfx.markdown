@@ -12,7 +12,7 @@ I'm not entirely sure why N3V (then Auran) decided to use this format and JET pl
 Regardless, it was still a fun challenge to reverse engineer the file format and subsequently create a viewer and editor program (with hopefully better camera controls than the original Auran tool).
 
 Before starting on the format serialization code or looking into the minutiae of particle rendering optimizations with OpenGL, I decided to first get to know the format and see how it's structured.
-This process consisted of a few hours of meticulously exporting pairs of .tfx files - one having the target value set to its default, and the other with an easily recognizable integer or float.
+This process consisted of a few hours of meticulously exporting and diffing pairs of .tfx files - one having the target value set to its default, and the other with an easily recognizable integer or float.
 After this, I had a more or less complete notepad document that I could base my viewer/editor off of.
 
 The format is structured as following (pseudocode):
@@ -62,7 +62,7 @@ I moved over some old SDL2 boilerplate from one of my previous OpenGL projects, 
 After a few matrix and quaternion headaches, I think I came up with a pretty neat way of rendering the particles without breaking the metaphorical performance bank.
 Rather than processing each particle quad on the CPU, I decided to handle particle geometry through OpenGL entirely!
 Instead of sending oriented triangle data to the GPU each frame or using the dreaded fixed function pipeline (*the horror*), I send the data initially to the GPU as a batch of particles (disguised as GL_POINTS vertices), each with a layout that contains all of the details of the particle's type (world position, rotation, size, etc).
-When the GPU receives these particles, they're then sent to a really cool geometry shader, which, based on the view and projection matrices, transforms the single point into a triangle strip primitive that can face the camera, face the velocity, face down, or billboard (you may notice a similarity here to the tfx particle type enum :) ).
+When the GPU receives these particles, they're then sent to a really cool geometry shader, which, using the view and projection matrices and some really cool cross product math, transforms the single point into a triangle strip primitive that can face the camera, face the velocity, face down, or billboard (you may notice a similarity here to the tfx particle type enum :) ).
 All of this has the effect of a crazy performance boost, and it only costs one draw call per emitter! (I'm super proud)
 
 [learnopengl]: https://learnopengl.com/
