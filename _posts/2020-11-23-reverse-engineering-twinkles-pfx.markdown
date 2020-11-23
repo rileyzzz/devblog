@@ -6,8 +6,8 @@ categories: development c++
 ---
 
 N3V Games's Trainz Railroad Simulator 2019 is a fairly modern game, and yet, it, and all previous iterations in the series, have roots dating back to Trainz 1.0, from 2000-2001.
-These roots range from design choices to content management tools, but the most interesting to me is its backwards compatibility with legacy formats.
-Among these formats is .tfx, a particle system file created by an obscure program called Twinkles.
+These roots range from design choices to content management tools, but the most interesting to me, however, is its backwards compatibility with legacy formats.
+Among these formats is .tfx, a particle system file created by an obscure program made by Kazys Stepanas in 2002 called Twinkles.
 I'm not entirely sure why N3V (then Auran) decided to use this format and JET plugin to handle particles rather than JET's built in particle functionality; from glancing at the engine documentation, the built in particles seem to be a lot more functional.
 Regardless, it was still a fun challenge to reverse engineer the file format and subsequently create a viewer and editor program (with hopefully better camera controls than the original Auran tool).
 
@@ -15,8 +15,8 @@ Before starting on the format serialization code or looking into the minutiae of
 This process consisted of a few hours of meticulously exporting and diffing pairs of .tfx files - one having the target value set to its default, and the other with an easily recognizable integer or float.
 After this, I had a more or less complete notepad document that I could base my viewer/editor off of.
 
-The format is structured as following (pseudocode):
-{% highlight cpp %}
+The format is structured as following:
+{% highlight plaintext %}
 XFPT type magic
 uint32 Version
 uint32 NumEmitters
