@@ -53,16 +53,16 @@ To handle reading and writing files, I drew heavy inspiration from Unreal 4's FA
 Similar to FArchive, my archive class overloads the left shift operator for both reading **and** writing.
 The archive also has an internal private member that keeps track of whether it's importing or exporting.
 These two things allow me to use a single function, Serialize, for all of the particle relevant classes, rather than two (export and import).
-It's a godsend for iteration, especially when doing format research, because changing a value's storage behavior won't require modifications to both the export and import functions(prevents bugs, too!).
-I used a template class to store the keyframe tracks, which allowed me to consolidate any code that retrieved the lower/upper bound frames and interpolated a value between them.
+It's a godsend for iteration, especially when doing format research, because changing a value's storage behavior won't require modifications to both the export and import functions (prevents bugs, too!).
+I used a template class to store the keyframe tracks, which allowed me to consolidate any code that retrieved the lower/upper bound frames and interpolated a value between them, despite the difference in types.
 
 After I was more or less confident that the data was reading correctly, I began working on a renderer and interface.
 I moved over some old SDL2 boilerplate from one of my previous OpenGL projects, and decided to use Dear ImGui for The Editor&trade;.
 ["Learn OpenGL"][learnopengl] was, as always, an indispensable resource in quickly looking up the proper syntax and ordering for GL calls.
 After a few matrix and quaternion headaches, I think I came up with a pretty neat way of rendering the particles without breaking the metaphorical performance bank.
 Rather than processing each particle quad on the CPU, I decided to handle particle geometry through OpenGL entirely!
-Instead of sending oriented triangle data to the GPU each frame or using the dreaded fixed function pipeline (*the horror*), I send the data initially to the GPU as a list of particles (disguised as vertices), each with a layout that contains all of the details of the particle's type (world position, rotation, size, etc).
+Instead of sending oriented triangle data to the GPU each frame or using the dreaded fixed function pipeline (*the horror*), I send the data initially to the GPU as a batch of particles (disguised as GL_POINTS vertices), each with a layout that contains all of the details of the particle's type (world position, rotation, size, etc).
 When the GPU receives these particles, they're then sent to a really cool geometry shader, which, based on the view and projection matrices, transforms the single point into a triangle strip primitive that can face the camera, face the velocity, face down, or billboard (you may notice a similarity here to the tfx particle type enum :) ).
-This has the effect of a crazy performance boost, and it only costs one draw call per emitter! (I'm super proud)
+All of this has the effect of a crazy performance boost, and it only costs one draw call per emitter! (I'm super proud)
 
 [learnopengl]: https://learnopengl.com/
