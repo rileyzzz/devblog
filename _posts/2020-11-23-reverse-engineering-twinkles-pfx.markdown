@@ -16,7 +16,7 @@ This process consisted of a few hours of meticulously exporting and diffing pair
 After this, I had a more or less complete notepad document that I could base my viewer/editor off of.
 
 The format is structured as following (pseudocode):
-{% highlight plaintext %}
+{% highlight cpp %}
 XFPT type magic
 uint32 Version
 uint32 NumEmitters
@@ -58,7 +58,7 @@ I used a template class to store the keyframe tracks, which allowed me to consol
 
 After I was more or less confident that the data was reading correctly, I began working on a renderer and interface.
 I moved over some old SDL2 boilerplate from one of my previous OpenGL projects, and decided to use Dear ImGui for The Editor&trade;.
-["Learn OpenGL"][learnopengl] was, as always, an indispensable resource in quickly looking up the easily forgettable syntax and ordering for GL calls.
+[Learn OpenGL][learnopengl] was, as always, an indispensable resource in quickly looking up the easily forgettable syntax and ordering for GL calls.
 After a few matrix and quaternion headaches, I think I came up with a pretty neat way of rendering the particles without breaking the metaphorical performance bank.
 Rather than processing each particle quad on the CPU, I decided to handle particle geometry through OpenGL entirely!
 Instead of sending oriented triangle data to the GPU each frame or using the dreaded fixed function pipeline (*the horror*), I send the data initially to the GPU as a batch of particles (disguised as GL_POINTS vertices), each with a layout that contains all of the details of the particle's type (world position, rotation, size, etc).
