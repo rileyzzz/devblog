@@ -24,14 +24,12 @@ uint32 NumEmitters
     Texture KUID (int32 UserID, uint32 ContentID, uint32 Revision)
     Vec3 Position
     Quat Rotation (xyzw)
-    //tracks along emitter life (time based emitters?)
     Track<Vector3> Emitter Size (uint32 NumFrames, Frames[float time, Vector3 Value])
     Track<float> Emission Rate
     Track<Vector3> Velocity Cone
     Track<float> Z Speed Variance
     ParticleType Type (FaceCamera 0x1, FaceMotion 0x2, FaceDown 0x4, FaceHorizontal 0x10)
     float unknown (emitter life?)
-    //tracks along particle life
     Track<float> Lifetime
     Track<float> Lifetime Variance
     Track<Vector2> Min/Max Size
