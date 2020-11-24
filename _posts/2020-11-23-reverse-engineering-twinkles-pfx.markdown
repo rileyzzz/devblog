@@ -6,8 +6,9 @@ categories: development c++
 ---
 
 N3V Games's Trainz Railroad Simulator 2019 is a fairly modern game, and yet, it, and all previous iterations in the series, have roots dating back to Trainz 1.0, from 2000-2001.
-These roots range from design choices to content management tools, but the most interesting to me, however, is its backwards compatibility with legacy formats.
-Among these formats is .tfx, a particle system file created by an obscure program made by Kazys Stepanas in 2002 called Twinkles.
+These roots range from simple design choices all the way to its content management tools.
+The most interesting to me, however, is its backwards compatibility with legacy formats.
+Among these formats is .tfx, a particle system file created by an obscure program made by Kazys Stepanas in 2002 called Twinkles, which I believe was built with support for their "Jet" engine in mind.
 I'm not entirely sure why N3V (then Auran) decided to use this format and JET plugin to handle particles rather than JET's built in particle functionality; from glancing at the engine documentation, the built in particles seem to be a lot more functional.
 Regardless, it was still a fun challenge to reverse engineer the file format and subsequently create a viewer and editor program (with hopefully better camera controls than the original Auran tool).
 
@@ -51,7 +52,7 @@ To handle reading and writing files, I drew heavy inspiration from Unreal 4's FA
 Similar to FArchive, my archive class overloads the left shift operator for both reading **and** writing.
 The archive also has an internal private member that keeps track of whether it's importing or exporting.
 These two things allow me to use a single function, Serialize, for all of the particle relevant classes, rather than two (export and import).
-It's a godsend for iteration, especially when doing format research, because changing a value's storage behavior won't require modifications to both the export and import functions (prevents bugs, too!).
+It's great for iteration, especially when doing format research, because changing a value's storage behavior won't require modifications to both the export and import functions (prevents bugs, too)!
 I used a template class to store the keyframe tracks, which allowed me to consolidate any code that retrieved the lower/upper bound frames and interpolated a value between them, despite the difference in types.
 
 After I was more or less confident that the data was reading correctly, I began working on a renderer and interface.
@@ -63,9 +64,9 @@ I moved over some old SDL2 boilerplate from one of my previous OpenGL projects, 
 
 
 After a few matrix and quaternion headaches, I think I came up with a pretty neat way of rendering the particles without breaking the metaphorical performance bank.
-Rather than processing each particle quad on the CPU, I decided to handle particle geometry through OpenGL entirely!
+Rather than processing each particle quad on the CPU, I decided to create the particle geometry through OpenGL entirely!
 Instead of sending oriented triangle data to the GPU each frame or using the dreaded fixed function pipeline (*the horror*), I send the data initially to the GPU as a batch of particles (disguised as GL_POINTS vertices), each with a layout that contains all of the details of the particle's type (world position, rotation, size, etc).
-When the GPU receives these particles, they're then sent to a really cool geometry shader, which, using the view and projection matrices and some really cool cross product math, transforms the single point into a triangle strip primitive that can face the camera, face the velocity, face down, or billboard (you may notice a similarity here to the tfx particle type enum :) ).
+When the GPU receives these particles, they're then sent to a really cool geometry shader, which, using the view and projection matrices and some fancy cross product math, transforms the single point into a triangle strip primitive that can face the camera, face the velocity, face down, or billboard (you may notice a similarity here to the tfx particle type enum :) ).
 All of this has the effect of a crazy performance boost, and it only costs one draw call per emitter! (I'm super proud)
 
 <figcaption>Efficient camera-facing quads!</figcaption>
