@@ -61,6 +61,7 @@ I moved over some old SDL2 boilerplate from one of my previous OpenGL projects, 
 <img src="https://i.ibb.co/6B8N9Bq/ezgif-com-gif-maker-8.gif">
 <figcaption>Early rendering tests using GL_POINTS</figcaption>
 
+
 After a few matrix and quaternion headaches, I think I came up with a pretty neat way of rendering the particles without breaking the metaphorical performance bank.
 Rather than processing each particle quad on the CPU, I decided to handle particle geometry through OpenGL entirely!
 Instead of sending oriented triangle data to the GPU each frame or using the dreaded fixed function pipeline (*the horror*), I send the data initially to the GPU as a batch of particles (disguised as GL_POINTS vertices), each with a layout that contains all of the details of the particle's type (world position, rotation, size, etc).
@@ -70,7 +71,9 @@ All of this has the effect of a crazy performance boost, and it only costs one d
 <img src="https://i.ibb.co/qDV2r04/ezgif-com-gif-maker-9.gif">
 <figcaption>Efficient camera-facing quads!</figcaption>
 
+
 <img src="https://i.ibb.co/M87qnPW/ezgif-com-gif-maker-10.gif">
 <figcaption>WIP particle time graph editing</figcaption>
+
 
 [learnopengl]: https://learnopengl.com/
