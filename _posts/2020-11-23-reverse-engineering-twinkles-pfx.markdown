@@ -75,5 +75,6 @@ All of this has the effect of a crazy performance boost, and it only costs one d
 <img src="https://i.ibb.co/M87qnPW/ezgif-com-gif-maker-10.gif">
 <figcaption>WIP particle time graph editing</figcaption>
 
+<img src="https://i.ibb.co/L0fcz7q/ezgif-com-gif-maker-11.gif">
 
 [learnopengl]: https://learnopengl.com/
