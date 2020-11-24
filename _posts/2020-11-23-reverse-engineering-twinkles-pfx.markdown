@@ -6,15 +6,15 @@ categories: development c++
 ---
 
 N3V Games's Trainz Railroad Simulator 2019 is a fairly modern game, and yet, it, and all previous iterations in the series, have roots dating back to Trainz 1.0, from 2000-2001.
-These roots range from simple design choices all the way to its content management tools.
-The most interesting to me, however, is its backwards compatibility with legacy formats.
-Among these formats is .tfx, a particle system file created by an obscure program made by Kazys Stepanas in 2002 called Twinkles, which I believe was built with support for their "Jet" engine in mind.
-I'm not entirely sure why N3V (then Auran) decided to use this format and JET plugin to handle particles rather than JET's built in particle functionality; from glancing at the engine documentation, the built in particles seem to be a lot more functional.
+These roots range from low level leftovers from 20 years ago and core design choices that are maintained with each release all the way to its content management tools and community full of Trainz veterans.
+One of the most interesting aspects to me, however, is Trainz's backwards compatibility with legacy formats.
+Among these formats is .tfx, a particle system file created by an obscure program made by Kazys Stepanas in 2002 called Twinkles, which I believe was built with support for Auran's "Jet" engine in mind.
+I'm not entirely sure why N3V (then Auran) decided to use this format and its JET plugin to handle particles rather than JET's built in particle functionality; from glancing at the engine documentation, the built in particles seem to be a lot more capable (trails, mesh emitters, etc).
 Regardless, it was still a fun challenge to reverse engineer the file format and subsequently create a viewer and editor program (with hopefully better camera controls than the original Auran tool).
 
-Before starting on the format serialization code or looking into the minutiae of particle rendering optimizations with OpenGL, I decided to first get to know the format and see how it's structured.
-This process consisted of a few hours of meticulously exporting and diffing pairs of .tfx files - one having the target value set to its default, and the other with an easily recognizable integer or float.
-After this, I had a more or less complete notepad document that I could base my viewer/editor off of.
+Before starting on the format serialization code or looking into the minutiae of particle rendering optimizations, I decided to first get to know the format and see how it's structured.
+This process consisted of a few hours of meticulously exporting and diffing pairs of .tfx files - one having a target value set to its default, and the other with the value set to an easily recognizable integer or float.
+After this, I had a pretty comprehensive notepad document that I could base my viewer/editor off of.
 
 The format is structured as following:
 {% highlight plaintext %}
@@ -30,7 +30,7 @@ uint32 NumEmitters
     Track<Vector3> Velocity Cone
     Track<float> Z Speed Variance
     ParticleType Type (FaceCamera 0x1, FaceMotion 0x2, FaceDown 0x4, FaceHorizontal 0x10)
-    float unknown (emitter life?)
+    float unknown
     Track<float> Lifetime
     Track<float> Lifetime Variance
     Track<Vector2> Min/Max Size
@@ -47,26 +47,26 @@ uint32 NumEmitters
     XFDE footer
 {% endhighlight %}
 
-Once that was done, it was time to start working on a C++ application.
+Once that was out of the way, it was time to start working on a C++ application.
 To handle reading and writing files, I drew heavy inspiration from Unreal 4's FArchive class.
 Similar to FArchive, my archive class overloads the left shift operator for both reading **and** writing.
 The archive also has an internal private member that keeps track of whether it's importing or exporting.
-These two things allow me to use a single function, Serialize, for all of the particle relevant classes, rather than two (export and import).
-It's great for iteration, especially when doing format research, because changing a value's storage behavior won't require modifications to both the export and import functions (prevents bugs, too)!
-I used a template class to store the keyframe tracks, which allowed me to consolidate any code that retrieved the lower/upper bound frames and interpolated a value between them, despite the difference in types.
+These two things allow me to use a single serialization function for all of the particle relevant classes, rather than two separate functions for export and import.
+Despite being intially weird, this design pattern is actually great for iteration, especially when doing format research, because changing a value's storage behavior won't require careful modifications to both export and import functions (prevents bugs, too)!
+I also used a template class to store the keyframe tracks, which allowed me to consolidate any code that retrieved the lower/upper bound frames and interpolated a value between them, despite the difference in types.
 
-After I was more or less confident that the data was reading correctly, I began working on a renderer and interface.
-I moved over some old SDL2 boilerplate from one of my previous OpenGL projects, and decided to use Dear ImGui for The Editor&trade;.
-[Learn OpenGL][learnopengl] was, as always, an indispensable resource in quickly looking up the easily forgettable syntax and ordering for GL calls.
+After I was more or less confident that the data was reading correctly, I started working on a renderer and interface.
+I moved over some old SDL2 boilerplate from one of my previous OpenGL projects, and went with Dear ImGui for The Editor&trade;.
+[Learn OpenGL][learnopengl] was, as always, an indispensable resource in quickly looking up the easily forgettable syntax and ordering of GL calls.
 
 <figcaption>Early rendering tests using GL_POINTS</figcaption>
 <img src="https://i.ibb.co/6B8N9Bq/ezgif-com-gif-maker-8.gif">
 
 
 After a few matrix and quaternion headaches, I think I came up with a pretty neat way of rendering the particles without breaking the metaphorical performance bank.
-Rather than processing each particle quad on the CPU, I decided to create the particle geometry through OpenGL entirely!
-Instead of sending oriented triangle data to the GPU each frame or using the dreaded fixed function pipeline (*the horror*), I send the data initially to the GPU as a batch of particles (disguised as GL_POINTS vertices), each with a layout that contains all of the details of the particle's type (world position, rotation, size, etc).
-When the GPU receives these particles, they're then sent to a really cool geometry shader, which, using the view and projection matrices and some fancy cross product math, transforms the single point into a triangle strip primitive that can face the camera, face the velocity, face down, or billboard (you may notice a similarity here to the tfx particle type enum :) ).
+Rather than processing each particle quad on the CPU, I decided to create the particle geometry through OpenGL entirely, taking advantage of graphics hardware.
+Instead of sending oriented triangle data to the GPU each frame or using the dreaded fixed function pipeline (*the horror*), I send the data initially to the GPU as a batch of particles (disguised as GL_POINTS vertices), each with a layout that contains all of the necessary details of the particle's type (world position, rotation, size, etc).
+When the GPU receives these particles, they're then sent to a really cool geometry shader, which, using the view and projection matrices and some fancy cross product math, transforms the single point into a triangle strip primitive that can face the camera, face the velocity, face down, or billboard (you may notice a similarity here to the tfx particle type enum :wink:).
 All of this has the effect of a crazy performance boost, and it only costs one draw call per emitter! (I'm super proud)
 
 <figcaption>Efficient camera-facing quads!</figcaption>
