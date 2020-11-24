@@ -58,8 +58,8 @@ After I was more or less confident that the data was reading correctly, I began 
 I moved over some old SDL2 boilerplate from one of my previous OpenGL projects, and decided to use Dear ImGui for The Editor&trade;.
 [Learn OpenGL][learnopengl] was, as always, an indispensable resource in quickly looking up the easily forgettable syntax and ordering for GL calls.
 
-<img src="https://i.ibb.co/6B8N9Bq/ezgif-com-gif-maker-8.gif">
 <figcaption>Early rendering tests using GL_POINTS</figcaption>
+<img src="https://i.ibb.co/6B8N9Bq/ezgif-com-gif-maker-8.gif">
 
 
 After a few matrix and quaternion headaches, I think I came up with a pretty neat way of rendering the particles without breaking the metaphorical performance bank.
@@ -68,12 +68,12 @@ Instead of sending oriented triangle data to the GPU each frame or using the dre
 When the GPU receives these particles, they're then sent to a really cool geometry shader, which, using the view and projection matrices and some really cool cross product math, transforms the single point into a triangle strip primitive that can face the camera, face the velocity, face down, or billboard (you may notice a similarity here to the tfx particle type enum :) ).
 All of this has the effect of a crazy performance boost, and it only costs one draw call per emitter! (I'm super proud)
 
-<img src="https://i.ibb.co/qDV2r04/ezgif-com-gif-maker-9.gif">
 <figcaption>Efficient camera-facing quads!</figcaption>
+<img src="https://i.ibb.co/qDV2r04/ezgif-com-gif-maker-9.gif">
 
-
-<img src="https://i.ibb.co/M87qnPW/ezgif-com-gif-maker-10.gif">
 <figcaption>WIP particle time graph editing</figcaption>
+<img src="https://i.ibb.co/M87qnPW/ezgif-com-gif-maker-10.gif">
+
 
 <img src="https://i.ibb.co/L0fcz7q/ezgif-com-gif-maker-11.gif">
 
