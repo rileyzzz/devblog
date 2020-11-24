@@ -10,8 +10,8 @@ These roots range from low level leftovers from 20 years ago all the way to its 
 One of the most interesting aspects to me, however, has been Trainz's backwards compatibility with legacy formats.
 
 Among these formats is .tfx, a particle system file created by Twinkles, an obscure program made by Kazys Stepanas in 2002.
-I believe the program was made with support for Auran's "Jet" engine in mind, but I'm not entirely sure why N3V (then Auran) chose it over JET's built in particle functionality; from glancing at the engine documentation, the built in particles seem to be a lot more capable (trails, mesh emitters, etc).
-Regardless, it was still a fun challenge to reverse engineer the format and subsequently create a viewer and editor program (with hopefully better camera controls than the original Auran tool).
+I believe the program was made with support for Auran's "Jet" engine in mind, but I'm not entirely sure why N3V (then Auran) chose it over JET's built in particle functionality; glancing at the engine documentation, the built in particles seem to be a lot more capable (trails, mesh emitters, etc).
+Regardless, it was still a fun challenge to reverse engineer the format and create a viewer/editor program (with hopefully better camera controls than the original Auran tool).
 
 Before starting on the format serialization code or looking into the minutiae of particle rendering optimizations, I decided to first get to know the format and see how it's structured.
 This process consisted of a few hours of meticulously exporting and diffing pairs of .tfx files - one having a target value set to its default, and the other with the value set to an easily recognizable integer or float.
@@ -51,7 +51,7 @@ uint32 NumEmitters
 Once that was out of the way, it was time to start working on a C++ application.
 To handle reading and writing files, I drew heavy inspiration from Unreal 4's FArchive class.
 Similar to FArchive, my archive class overloads the left shift operator for both reading **and** writing.
-The archive also has an internal private member that keeps track of whether it's importing or exporting.
+The archive also contains a private flag that keeps track of whether it's importing or exporting.
 These two things allow me to use a single serialization function for all of the particle relevant classes, rather than two separate functions for export and import.
 Despite it being initially confusing, this design pattern is actually great for iteration, especially when doing format research, because changing a value's storage behavior won't require careful modifications to both export and import functions (prevents bugs, too)!
 I also used a template class to store the keyframe tracks, which allowed me to consolidate any code that retrieved the lower/upper bound frames and interpolated a value between them, despite the difference in types.
