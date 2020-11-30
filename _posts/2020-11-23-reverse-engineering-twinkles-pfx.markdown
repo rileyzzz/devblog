@@ -5,17 +5,17 @@ date:   2020-11-23 11:59:17 -0600
 categories: development c++
 ---
 
-N3V Games's Trainz Railroad Simulator 2019 is a fairly modern game, and yet, it, and all previous iterations in the series, have roots dating back to Trainz 1.0, from 2000-2001.
-These roots range from low level leftovers from 20 years ago all the way to its battle-tested content management tools and community full of Trainz veterans.
-One of the most interesting aspects to me, however, has been Trainz's backwards compatibility with legacy formats.
+N3V Games's Trainz Railroad Simulator 2019 is a fairly modern game, and yet, it, and all previous iterations in the Trainz series, have roots dating back to Trainz 1.0, from 2000-2001.
+These roots range from low level leftovers from 20 years ago all the way to its battle-tested content management tools and its community full of Trainz veterans.
+One of the most interesting aspects to me, however, has been Trainz's continued backwards compatibility with legacy formats.
 
-Among these formats is .tfx, a particle system file created by Twinkles, an obscure program made by Kazys Stepanas in 2002.
+Among these formats is .tfx, a particle system file created by Twinkles - an obscure program made by Kazys Stepanas in 2002.
 I believe the program was made with support for Auran's "Jet" engine in mind, but I'm not entirely sure why N3V (then Auran) chose it over JET's built in particle functionality; glancing at the engine documentation, the built in particles seem to be a lot more capable (trails, mesh emitters, etc).
 Regardless, it was still a fun challenge to reverse engineer the format and create a viewer/editor program (with hopefully better camera controls than the original Auran tool).
 
 Before starting on the format serialization code or looking into the minutiae of particle rendering optimizations, I decided to first get to know the format and see how it's structured.
 This process consisted of a few hours of meticulously exporting and diffing pairs of .tfx files - one having a target value set to its default, and the other with the value set to an easily recognizable integer or float.
-After this, I had a pretty comprehensive notepad document that I could base my viewer/editor off of.
+After poring over the hex comparisons, I had a pretty comprehensive notepad document that I could base my viewer/editor off of.
 
 The format is structured as following:
 {% highlight plaintext %}
